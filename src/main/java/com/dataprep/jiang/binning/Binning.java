@@ -17,11 +17,11 @@ abstract public class Binning {
         bins = new Bin[this.numOfBins];
     }
 
-    abstract void createBins(Collection<Object> data);
+    abstract void createBins(Collection<?> data);
 
     protected class Bin {
 
-        private int count = 0;
+        private long count = 0;
 
         private Object lowerBound;
 
@@ -32,8 +32,12 @@ abstract public class Binning {
             this.higherBound = higherBound;
         }
 
-        public int getCount() {
+        public long getCount() {
             return count;
+        }
+
+        public void setCount(long count) {
+            this.count = count;
         }
 
         public Object getLowerBound() {
@@ -47,7 +51,7 @@ abstract public class Binning {
 
     protected class NumericBin extends Bin {
 
-        public NumericBin(float lowerBound, float higherBound) {
+        public NumericBin(double lowerBound, double higherBound) {
             super(lowerBound, higherBound);
         }
     }

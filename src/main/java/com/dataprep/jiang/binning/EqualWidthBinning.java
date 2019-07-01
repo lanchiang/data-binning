@@ -1,5 +1,7 @@
 package com.dataprep.jiang.binning;
 
+import com.dataprep.jiang.datatype.DataTypeSniffer;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -16,13 +18,13 @@ public class EqualWidthBinning extends Binning {
     }
 
     @Override
-    void createBins(Collection<Object> data) {
+    void createBins(Collection<?> data) {
         double width = (double) data.size() / (double) numOfBins;
         Set<Object> distinctData = new TreeSet<>(data);
 
         DataTypeSniffer.DataType dataType = DataTypeSniffer.sniffDataType(distinctData);
         if (dataType == DataTypeSniffer.DataType.Numeric) {
-            List<Float> numerics = distinctData.parallelStream().map(element -> Float.parseFloat(element.toString())).collect(Collectors.toList());
+            List<Double> numerics = distinctData.parallelStream().map(element -> Double.parseDouble(element.toString())).collect(Collectors.toList());
             for (int i = 0; i < numOfBins; i++) {
                 int lowerBound = (int) (i * width);
                 int higherBound = (int) ((i + 1) * width);
@@ -44,7 +46,7 @@ public class EqualWidthBinning extends Binning {
                 }
             }
         } else {
-            // do nothing
+            throw new RuntimeException(new IllegalArgumentException("Data type is incorrect."));
         }
     }
 }

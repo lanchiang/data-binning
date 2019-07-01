@@ -18,4 +18,9 @@ public class EqualWidthBinningTest {
         Binning binning = new EqualWidthBinning(2);
         binning.createBins(data);
     }
+
+    @Test
+    public void textEqualWidthBinningTest() {
+
+    }
 }

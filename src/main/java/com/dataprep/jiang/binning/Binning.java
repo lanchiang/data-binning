@@ -56,9 +56,9 @@ abstract public class Binning {
         }
     }
 
-    protected class NominalBin extends Bin {
+    protected class TextBin extends Bin {
 
-        public NominalBin(String lowerBound, String higherBound) {
+        public TextBin(String lowerBound, String higherBound) {
             super(lowerBound, higherBound);
         }
     }

@@ -9,7 +9,7 @@ import java.util.Optional;
 public class DataTypeSniffer {
 
     public enum DataType {
-        Numeric, Nominal
+        Numeric, Text
     }
 
     /**
@@ -27,6 +27,6 @@ public class DataTypeSniffer {
             }
             return false;
         }).findFirst();
-        return findNonNumeric.isPresent() ? DataType.Nominal : DataType.Numeric;
+        return findNonNumeric.isPresent() ? DataType.Text : DataType.Numeric;
     }
 }

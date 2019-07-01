@@ -53,9 +53,9 @@ public class EqualDepthBinning extends Binning {
 
                 Bin bin;
                 if (i == numOfBins - 1) {
-                    bin = new NominalBin(distinctStrings.get(lower), distinctStrings.get(higher - 1) + " ");
+                    bin = new TextBin(distinctStrings.get(lower), distinctStrings.get(higher - 1) + " ");
                 } else {
-                    bin = new NominalBin(distinctStrings.get(lower), distinctStrings.get(higher));
+                    bin = new TextBin(distinctStrings.get(lower), distinctStrings.get(higher));
                 }
                 long count = strings.stream()
                         .filter(tuple -> tuple.compareTo(bin.getLowerBound().toString()) >= 0 && tuple.compareTo(bin.getHigherBound().toString()) < 0)

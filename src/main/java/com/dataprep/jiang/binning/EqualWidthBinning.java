@@ -34,15 +34,15 @@ public class EqualWidthBinning extends Binning {
                     bins[i] = new NumericBin(numerics.get(lowerBound), numerics.get(higherBound));
                 }
             }
-        } else if (dataType == DataTypeSniffer.DataType.Nominal) {
+        } else if (dataType == DataTypeSniffer.DataType.Text) {
             List<String> strings = distinctData.stream().map(Object::toString).collect(Collectors.toList());
             for (int i=0;i<numOfBins;i++) {
                 int lower = (int) (width*i);
                 int higher = (int) (width*(i+1));
                 if (i==numOfBins-1) {
-                    bins[i] = new NominalBin(strings.get(lower), strings.get(higher - 1) + " ");
+                    bins[i] = new TextBin(strings.get(lower), strings.get(higher - 1) + " ");
                 } else {
-                    bins[i] = new NominalBin(strings.get(lower), strings.get(higher));
+                    bins[i] = new TextBin(strings.get(lower), strings.get(higher));
                 }
             }
         } else {

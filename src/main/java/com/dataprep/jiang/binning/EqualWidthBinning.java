@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
  */
 public class EqualWidthBinning extends Binning {
 
-    public EqualWidthBinning(int numOfBins) {
-        super(numOfBins);
+    public EqualWidthBinning(Collection<?> data, int numOfBins) {
+        super(data, numOfBins);
     }
 
     @Override
-    void createBins(Collection<?> data) {
+    protected void createBins() {
         double width = (double) data.size() / (double) numOfBins;
         Set<Object> distinctData = new TreeSet<>(data);
 
-        DataTypeSniffer.DataType dataType = DataTypeSniffer.sniffDataType(distinctData);
+        dataType = DataTypeSniffer.sniffDataType(distinctData);
         if (dataType == DataTypeSniffer.DataType.Numeric) {
             List<Double> numerics = distinctData.parallelStream().map(element -> Double.parseDouble(element.toString())).collect(Collectors.toList());
             for (int i = 0; i < numOfBins; i++) {
@@ -36,17 +36,17 @@ public class EqualWidthBinning extends Binning {
             }
         } else if (dataType == DataTypeSniffer.DataType.Text) {
             List<String> strings = distinctData.stream().map(Object::toString).collect(Collectors.toList());
-            for (int i=0;i<numOfBins;i++) {
-                int lower = (int) (width*i);
-                int higher = (int) (width*(i+1));
-                if (i==numOfBins-1) {
+            for (int i = 0; i < numOfBins; i++) {
+                int lower = (int) (width * i);
+                int higher = (int) (width * (i + 1));
+                if (i == numOfBins - 1) {
                     bins[i] = new TextBin(strings.get(lower), strings.get(higher - 1) + " ");
                 } else {
                     bins[i] = new TextBin(strings.get(lower), strings.get(higher));
                 }
             }
         } else {
-            throw new RuntimeException(new IllegalArgumentException("Data type is incorrect."));
+            throw new IllegalArgumentException("Data type is incorrect.");
         }
     }
 }

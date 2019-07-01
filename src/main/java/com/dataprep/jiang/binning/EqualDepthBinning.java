@@ -14,13 +14,13 @@ public class EqualDepthBinning extends Binning {
 
     private final static float eps = 1;
 
-    public EqualDepthBinning(int numOfBins) {
-        super(numOfBins);
+    public EqualDepthBinning(Collection<?> data, int numOfBins) {
+        super(data, numOfBins);
     }
 
     @Override
-    void createBins(Collection<?> data) {
-        DataTypeSniffer.DataType dataType = DataTypeSniffer.sniffDataType(data);
+    protected void createBins() {
+        dataType = DataTypeSniffer.sniffDataType(data);
 
         float dataSize = data.size();
         if (dataType == DataTypeSniffer.DataType.Numeric) {

@@ -15,8 +15,9 @@ public class EqualWidthBinningTest {
         Double[] dataArray = new Double[]{0.5, 0.1, 0.3, 0.6, 1.3, 3.3, 2.3, 6.0, 4.5};
         Collection<?> data = Arrays.asList(dataArray);
 
-        Binning binning = new EqualWidthBinning(2);
-        binning.createBins(data);
+        Binning binning = new EqualWidthBinning(data, 2);
+        binning.createBins();
+        binning.assignData();
     }
 
     @Test

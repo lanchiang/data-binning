@@ -24,8 +24,14 @@ abstract public class Binning {
         bins = new Bin[this.numOfBins];
     }
 
+    /**
+     * Create <code>numOfBins</code> bins from the given <code>data</code>. The bins are left inclusive and right exclusive.
+     */
     abstract protected void createBins();
 
+    /**
+     * Assign each of the data points in the data collection into the corresponding bin.
+     */
     public void assignData() {
         if (Arrays.stream(bins).anyMatch(Objects::isNull)) {
             createBins();
@@ -41,7 +47,7 @@ abstract public class Binning {
             Collection<Object> dataPoints = new LinkedList<>();
             while (!dataQueue.isEmpty()) {
                 double dataPoint = dataQueue.peek();
-                if (dataPoint < Double.parseDouble(bins[binCursor].getHigherBound().toString())) {
+                if (dataPoint < Double.parseDouble(bins[binCursor].getUpperBound().toString())) {
                     dataPoints.add(dataQueue.poll());
                 } else {
                     bins[binCursor].fillBin(dataPoints);
@@ -51,42 +57,71 @@ abstract public class Binning {
             }
             bins[binCursor].fillBin(dataPoints);
         } else if (dataType == DataTypeSniffer.DataType.Text) {
-            List<String> convertedData = data.stream().map(Object::toString).sorted().collect(Collectors.toList());
-            for (String tuple : convertedData) {
-                for (Bin bin : bins) {
-                    if (tuple.compareTo(bin.getHigherBound().toString()) < 0) {
-                        bin.setCount(bin.getCount() + 1);
-                        break;
-                    }
+            int binCursor = 0;
+
+            Queue<String> orderedDataQueue = data.stream().map(Object::toString).sorted().collect(Collectors.toCollection(LinkedList::new));
+
+            Collection<Object> dataPoints = new LinkedList<>();
+            while (!orderedDataQueue.isEmpty()) {
+                String dataPoint = orderedDataQueue.peek();
+                if (dataPoint.compareTo(bins[binCursor].getUpperBound().toString()) < 0) {
+                    dataPoints.add(orderedDataQueue.poll());
+                } else {
+                    bins[binCursor].fillBin(dataPoints);
+                    dataPoints = new LinkedList<>();
+                    binCursor++;
                 }
             }
+            bins[binCursor].fillBin(dataPoints);
         } else {
             throw new IllegalArgumentException("Data type does not exist.");
         }
     }
 
-    protected class Bin {
+    /**
+     * Get the data points in a bin specified by its index.
+     *
+     * @param index
+     * @return
+     */
+    public Collection<?> getDataByBinIndex(int index) {
+        return this.bins[index].getData();
+    }
+
+    public int getNumOfBins() {
+        return numOfBins;
+    }
+
+    public Bin[] getBins() {
+        return bins;
+    }
+
+    public DataTypeSniffer.DataType getDataType() {
+        return dataType;
+    }
+
+    public class Bin {
 
         private long count = 0;
 
         private Object lowerBound;
 
-        private Object higherBound;
+        private Object upperBound;
 
         private Collection<Object> data;
 
-        public Bin(Object lowerBound, Object higherBound) {
+        public Bin(Object lowerBound, Object upperBound) {
             this.lowerBound = lowerBound;
-            this.higherBound = higherBound;
-        }
-
-        public Collection<Object> getData() {
-            return data;
+            this.upperBound = upperBound;
         }
 
         public void fillBin(Collection<Object> data) {
             this.data = data;
             this.count = data.size();
+        }
+
+        public Collection<Object> getData() {
+            return data;
         }
 
         public long getCount() {
@@ -101,22 +136,22 @@ abstract public class Binning {
             return lowerBound;
         }
 
-        public Object getHigherBound() {
-            return higherBound;
+        public Object getUpperBound() {
+            return upperBound;
         }
     }
 
-    class NumericBin extends Bin {
+    public class NumericBin extends Bin {
 
-        NumericBin(double lowerBound, double higherBound) {
-            super(lowerBound, higherBound);
+        NumericBin(double lowerBound, double upperBound) {
+            super(lowerBound, upperBound);
         }
     }
 
-    class TextBin extends Bin {
+    public class TextBin extends Bin {
 
-        TextBin(String lowerBound, String higherBound) {
-            super(lowerBound, higherBound);
+        TextBin(String lowerBound, String upperBound) {
+            super(lowerBound, upperBound);
         }
     }
 }
